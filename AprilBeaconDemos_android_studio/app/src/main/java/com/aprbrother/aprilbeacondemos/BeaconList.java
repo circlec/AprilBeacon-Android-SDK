@@ -186,22 +186,34 @@ public class BeaconList extends Activity {
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "onStart");
-        // if (!beaconManager.hasBluetooth()) {
-        // Toast.makeText(this, "Device does not have Bluetooth Low Energy",
-        // Toast.LENGTH_LONG).show();
-        // Log.i(TAG, "!hasBluetooth");
-        // return;
-        // }
-        // if (!beaconManager.isBluetoothEnabled()) {
-        // Log.i(TAG, "!isBluetoothEnabled");
-        // Intent enableBtIntent = new Intent(
-        // BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        // startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        // } else {
-        // connectToService();
-        // }
-        connectToService();
+//         connectToService();
+        requestAllPower();
     }
+    
+    public void requestAllPower() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    1);
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                Toast.makeText(this, "shouldShowRequestPermissionRationale", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            connectToService();
+        }
+    }
+    
+      @Override
+    public void onRequestPermissionsResult(int requestCode,String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            if (permissions[0] .equals(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                connectToService();
+            }
+        }
+    }
+    
 
     @Override
     protected void onDestroy() {
